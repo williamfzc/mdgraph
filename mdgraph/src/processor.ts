@@ -1,5 +1,5 @@
 const fs = require("fs")
-import { Link } from './model'
+import { Link } from "./model"
 
 // different platforms
 class Reader {
@@ -28,7 +28,6 @@ class Reader {
     }
 }
 
-
 export class Processor {
     private REGEX_LINK: RegExp = /\[.*?\]\(.*?\)/
     private REGEX_LINK_TITLE: RegExp = /\[(.*?)\]/
@@ -47,7 +46,8 @@ export class Processor {
     }
 
     process(reader: Reader) {
-        reader.getDataList()
+        reader
+            .getDataList()
             .filter((value: string) => {
                 return value.match(this.REGEX_LINK)
             })
@@ -63,9 +63,8 @@ export class Processor {
             .forEach((value) => {
                 this.processLink(value!)
             })
-        
+
         // recursily
-        
     }
 
     processLink(link: Link) {
