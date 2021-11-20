@@ -1,38 +1,26 @@
-const path = require("path")
+export enum NodeType {
+    // url can be:
+    // - remote link
+    // - local abs path
+    // - default (none)
+    REMOTE,
+    LOCAL,
+    DEFAULT,
+}
 
-export class Link {
+export class Node {
     title: string = ""
-    url: string = ""
+    path: string = ""
+    nodeType: NodeType = NodeType.DEFAULT
 
-    constructor(title: string, url: string | undefined) {
+    constructor(title: string, path: string, nodeType: NodeType) {
         this.title = title
-        this.url = url || ""
+        // if local, this path should be absolute
+        this.path = path
+        this.nodeType = nodeType
     }
 
-    isEmpty(): boolean {
-        return this.url == ""
-    }
-
-    isRemote(): boolean {
-        if (this.url.startsWith("http")) {
-            return true
-        }
-        // maybe is empty
-        return false
-    }
-
-    isLocal(): boolean {
-        return !this.isEmpty() && !this.isRemote()
-    }
-
-    isRelPath(): boolean {
-        return this.url.startsWith(".")
-    }
-
-    getPath(): string {
-        if (!this.isRelPath()) {
-            return this.url
-        }
-        return path.resolve(this.url)
+    getId(): String {
+        return `${this.title}-${this.path}-${this.nodeType}`
     }
 }

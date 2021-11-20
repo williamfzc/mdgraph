@@ -1,24 +1,27 @@
-import { Link } from "./model"
+import { Node, NodeType } from "./model"
 import { Reader } from "./reader"
+import { NodeStorage } from "./storage";
+const path = require('path');
 
 export class Processor {
     private REGEX_LINK: RegExp = /\[.*?\]\(.*?\)/
     private REGEX_LINK_TITLE: RegExp = /\[(.*?)\]/
     private REGEX_LINK_URL: RegExp = /\((.*?)\)/
+    
+    private nodeStorage = new NodeStorage()
 
-    processFile(filePath: string) {
+    processAbsFile(filePath: string) {
+        console.log(`process file: ${filePath}`)
+        let root = new Node(path.basename(filePath), filePath, NodeType.LOCAL)
+        this.nodeStorage.add(root)
+
+        // analyse this file
         let reader = new Reader()
         reader.readFromFile(filePath)
-        return this.process(reader)
+        return this.process(root, reader)
     }
 
-    processString(content: string) {
-        let reader = new Reader()
-        reader.readFromString(content)
-        return this.process(reader)
-    }
-
-    process(reader: Reader) {
+    process(rootNode: Node, reader: Reader) {
         reader
             .getDataList()
             .filter((value: string) => {
@@ -26,35 +29,36 @@ export class Processor {
             })
             .map((value) => {
                 let title = value.match(this.REGEX_LINK_TITLE)?.[1]
-                let link = value.match(this.REGEX_LINK_URL)?.[1]
-                if (title == null || title == "") {
+                let url = value.match(this.REGEX_LINK_URL)?.[1]
+                if (title == null || title == "" || url == null || url == "") {
                     return null
                 }
-                return new Link(title, link)
+                // valid node
+                // do not know its info yet
+                return new Node(title, url, NodeType.DEFAULT)
             })
             .filter((value) => value != null)
             .forEach((value) => {
-                this.processLink(value!)
+                this.processNode(rootNode, value!)
             })
-
-        // recursily
+        // scan finished
     }
 
-    processLink(link: Link) {
-        if (link.isLocal()) {
-            this.processLocalLink(link)
-        } else if (link.isRemote()) {
-            this.processRemoteLink(link)
-        } else {
-            // do nothing
+    processNode(rootNode: Node, node: Node) {
+        if (this.nodeStorage.has(node)) {
+            return
         }
-    }
-
-    processLocalLink(link: Link) {
-        console.log(`local link: ${link.getPath()}`)
-    }
-
-    processRemoteLink(link: Link) {
-        console.log(`remote link: ${link.getPath()}`)
+        // remote node, stop diving in
+        // save it to storage
+        if (node.path.startsWith("http")) {
+            node.nodeType = NodeType.REMOTE
+            this.nodeStorage.add(node)
+            return
+        }
+        // rel path
+        if (node.path.startsWith(".")) {
+            node.path = path.resolve(path.dirname(rootNode.path), node.path)
+        }
+        this.processAbsFile(node.path)
     }
 }
