@@ -1,32 +1,5 @@
-const fs = require("fs")
 import { Link } from "./model"
-
-// different platforms
-class Reader {
-    private data: string = ""
-    private ENCODING: string = "utf8"
-    private SPLIT_FLAG: string = "\n"
-
-    readFromFile(filePath: string) {
-        this.data = fs.readFileSync(filePath, this.ENCODING)
-    }
-
-    readFromString(content: string) {
-        this.data = content
-    }
-
-    reset() {
-        this.data = ""
-    }
-
-    getData(): string {
-        return this.data
-    }
-
-    getDataList(): Array<string> {
-        return this.data.split(this.SPLIT_FLAG)
-    }
-}
+import { Reader } from "./reader"
 
 export class Processor {
     private REGEX_LINK: RegExp = /\[.*?\]\(.*?\)/
