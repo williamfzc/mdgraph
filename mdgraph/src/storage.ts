@@ -10,4 +10,8 @@ export class NodeStorage {
     has(target: Node): boolean {
         return this.nodeStorage.has(target.getId())
     }
+
+    getAll(): Map<String, Node> {
+        return this.nodeStorage
+    }
 }

@@ -11,6 +11,7 @@ export enum NodeType {
 export class Node {
     title: string = ""
     path: string = ""
+    subNodes: Set<Node> = new Set()
     nodeType: NodeType = NodeType.DEFAULT
 
     constructor(title: string, path: string, nodeType: NodeType) {
@@ -21,6 +22,6 @@ export class Node {
     }
 
     getId(): String {
-        return `${this.title}-${this.path}-${this.nodeType}`
+        return `${this.path}`
     }
 }

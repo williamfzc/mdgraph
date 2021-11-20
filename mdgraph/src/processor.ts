@@ -1,24 +1,41 @@
 import { Node, NodeType } from "./model"
 import { Reader } from "./reader"
-import { NodeStorage } from "./storage";
-const path = require('path');
+import { NodeStorage } from "./storage"
+const path = require("path")
 
 export class Processor {
     private REGEX_LINK: RegExp = /\[.*?\]\(.*?\)/
     private REGEX_LINK_TITLE: RegExp = /\[(.*?)\]/
     private REGEX_LINK_URL: RegExp = /\((.*?)\)/
-    
+
     private nodeStorage = new NodeStorage()
 
     processAbsFile(filePath: string) {
-        console.log(`process file: ${filePath}`)
+        // basename as its title
         let root = new Node(path.basename(filePath), filePath, NodeType.LOCAL)
-        this.nodeStorage.add(root)
+        this.processNode(root)
 
-        // analyse this file
+        // scan finished
+        // TODO
+        // this.nodeStorage.getAll().forEach((v) => {
+        //     console.log(`${v.subNodes.size}`)
+        // })
+    }
+
+    processNode(node: Node) {
+        // todo: need check this node?
+
+        // has been scanned?
+        if (this.nodeStorage.has(node)) {
+            return
+        }
+
+        // save this node firstly
+        this.nodeStorage.add(node)
+
         let reader = new Reader()
-        reader.readFromFile(filePath)
-        return this.process(root, reader)
+        reader.readFromFile(node.path)
+        return this.process(node, reader)
     }
 
     process(rootNode: Node, reader: Reader) {
@@ -39,12 +56,14 @@ export class Processor {
             })
             .filter((value) => value != null)
             .forEach((value) => {
-                this.processNode(rootNode, value!)
+                this.analyseNode(rootNode, value!)
             })
-        // scan finished
     }
 
-    processNode(rootNode: Node, node: Node) {
+    analyseNode(rootNode: Node, node: Node) {
+        rootNode.subNodes.add(node)
+
+        // this node has been scanned
         if (this.nodeStorage.has(node)) {
             return
         }
@@ -59,6 +78,6 @@ export class Processor {
         if (node.path.startsWith(".")) {
             node.path = path.resolve(path.dirname(rootNode.path), node.path)
         }
-        this.processAbsFile(node.path)
+        this.processNode(node)
     }
 }
