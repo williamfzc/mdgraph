@@ -2,6 +2,7 @@ import { Node } from "./model"
 
 export class NodeStorage {
     private nodeStorage: Map<String, Node> = new Map()
+    rootNode: Node | undefined
 
     add(newNode: Node) {
         this.nodeStorage.set(newNode.getId(), newNode)

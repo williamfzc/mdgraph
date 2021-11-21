@@ -10,10 +10,12 @@ export class Processor {
 
     private nodeStorage = new NodeStorage()
 
-    processAbsFile(filePath: string) {
+    // entry method
+    processAbsFile(filePath: string): Node {
         // basename as its title
         let root = new Node(path.basename(filePath), filePath, NodeType.LOCAL)
         this.processNode(root)
+        return root
 
         // scan finished
         // TODO
