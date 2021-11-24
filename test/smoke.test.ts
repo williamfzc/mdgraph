@@ -17,6 +17,8 @@ describe("add function", () => {
 
     it("tosvg", () => {
         let root = MDG.file2tree(path.resolve("test/res/a.md"))
-        MDG.tree2file(root, "test/res/abc.svg", () => {})
+        MDG.tree2svg(root, "test/res/abc.svg", (err) => {
+            console.error(err)
+        })
     })
 })

@@ -13,36 +13,20 @@ export namespace MDG {
         return file2tree(filePath).flatten()
     }
 
-    export function tree2graph(
-        node: Node,
-        cb: (arg0: string) => any,
-        errCb: (arg1: any) => any
-    ) {
-        new Drawer()
-            .draw(node)
-            .then((ret) => {
-                cb(ret)
-            })
-            .catch((err) => {
-                errCb(err)
-            })
-    }
-
-    export function tree2file(
+    export function tree2svg(
         node: Node,
         outputPath: string,
         errCb: (arg1: any) => any
     ) {
-        tree2graph(
-            node,
-            (content: string) => {
+        new Drawer()
+            .draw(node)
+            .toSVG()
+            .then((content: string) => {
                 fs.writeFile(outputPath, content, (err: any) => {
                     if (err) {
-                        console.error(err)
+                        errCb(err)
                     }
                 })
-            },
-            errCb
-        )
+            })
     }
 }

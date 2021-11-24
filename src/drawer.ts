@@ -1,8 +1,9 @@
 import { Node } from "./model"
+import { View } from "vega"
 const vega = require("vega")
 
 export class Drawer {
-    draw(node: Node): Promise<string> {
+    draw(node: Node): View {
         let values = node.flatten()
 
         var yourVlSpec = {
@@ -25,7 +26,10 @@ export class Drawer {
                         },
                         {
                             type: "tree",
-                            size: [{ signal: "height" }, { signal: "width - 100" }],
+                            size: [
+                                { signal: "height" },
+                                { signal: "width - 100" },
+                            ],
                             separation: false,
                             as: ["y", "x", "depth", "children"],
                         },
@@ -45,15 +49,15 @@ export class Drawer {
                 },
             ],
 
-            "scales": [
+            scales: [
                 {
-                  "name": "color",
-                  "type": "linear",
-                  "range": {"scheme": "magma"},
-                  "domain": {"data": "tree", "field": "depth"},
-                  "zero": true
-                }
-              ],
+                    name: "color",
+                    type: "linear",
+                    range: { scheme: "magma" },
+                    domain: { data: "tree", field: "depth" },
+                    zero: true,
+                },
+            ],
 
             marks: [
                 {
@@ -64,11 +68,11 @@ export class Drawer {
                             size: { value: 100 },
                             stroke: { value: "#fff" },
                         },
-                        "update": {
-                            "x": {"field": "x"},
-                            "y": {"field": "y"},
-                            "fill": {"scale": "color", "field": "depth"}
-                          }
+                        update: {
+                            x: { field: "x" },
+                            y: { field: "y" },
+                            fill: { scale: "color", field: "depth" },
+                        },
                     },
                 },
                 {
@@ -82,27 +86,30 @@ export class Drawer {
                     },
                 },
                 {
-                    "type": "text",
-                    "from": {"data": "tree"},
-                    "encode": {
-                      "enter": {
-                        "text": {"field": "title"},
-                        "fontSize": {"value": 24},
-                        "baseline": {"value": "middle"}
-                      },
-                      "update": {
-                        "x": {"field": "x"},
-                        "y": {"field": "y"},
-                        "dx": {"signal": "datum.children ? -7 : 7"},
-                        "align": {"signal": "datum.children ? 'right' : 'left'"},
-                        "opacity": {"value": 1}
-                      }
-                    }
-                  }
+                    type: "text",
+                    from: { data: "tree" },
+                    encode: {
+                        enter: {
+                            text: { field: "title" },
+                            fontSize: { value: 24 },
+                            baseline: { value: "middle" },
+                            href: { value: "datum.path" },
+                        },
+                        update: {
+                            x: { field: "x" },
+                            y: { field: "y" },
+                            dx: { signal: "datum.children ? -7 : 7" },
+                            align: {
+                                signal: "datum.children ? 'right' : 'left'",
+                            },
+                            opacity: { value: 1 },
+                        },
+                        href: { field: "web" },
+                    },
+                },
             ],
         }
 
-        var view = new vega.View(vega.parse(yourVlSpec), { renderer: "none" })
-        return view.toSVG()
+        return new vega.View(vega.parse(yourVlSpec), { renderer: "none" })
     }
 }
