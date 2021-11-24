@@ -1,6 +1,4 @@
-import { json } from "stream/consumers"
 import { Node } from "./model"
-const lite = require("vega-lite")
 const vega = require("vega")
 
 export class Drawer {
@@ -10,8 +8,8 @@ export class Drawer {
         var yourVlSpec = {
             $schema: "https://vega.github.io/schema/vega/v5.json",
             description: "A specification outline example.",
-            width: 500,
-            height: 200,
+            width: 720,
+            height: 720,
             padding: 5,
             autosize: "pad",
 
@@ -27,7 +25,7 @@ export class Drawer {
                         },
                         {
                             type: "tree",
-                            size: [{ signal: "height" }, { signal: "width" }],
+                            size: [{ signal: "height" }, { signal: "width - 100" }],
                             separation: false,
                             as: ["y", "x", "depth", "children"],
                         },
@@ -47,6 +45,16 @@ export class Drawer {
                 },
             ],
 
+            "scales": [
+                {
+                  "name": "color",
+                  "type": "linear",
+                  "range": {"scheme": "magma"},
+                  "domain": {"data": "tree", "field": "depth"},
+                  "zero": true
+                }
+              ],
+
             marks: [
                 {
                     type: "symbol",
@@ -56,11 +64,11 @@ export class Drawer {
                             size: { value: 100 },
                             stroke: { value: "#fff" },
                         },
-                        update: {
-                            x: { field: "x" },
-                            y: { field: "y" },
-                            fill: { value: "black" },
-                        },
+                        "update": {
+                            "x": {"field": "x"},
+                            "y": {"field": "y"},
+                            "fill": {"scale": "color", "field": "depth"}
+                          }
                     },
                 },
                 {
@@ -73,6 +81,24 @@ export class Drawer {
                         },
                     },
                 },
+                {
+                    "type": "text",
+                    "from": {"data": "tree"},
+                    "encode": {
+                      "enter": {
+                        "text": {"field": "title"},
+                        "fontSize": {"value": 24},
+                        "baseline": {"value": "middle"}
+                      },
+                      "update": {
+                        "x": {"field": "x"},
+                        "y": {"field": "y"},
+                        "dx": {"signal": "datum.children ? -7 : 7"},
+                        "align": {"signal": "datum.children ? 'right' : 'left'"},
+                        "opacity": {"value": 1}
+                      }
+                    }
+                  }
             ],
         }
 
