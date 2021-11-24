@@ -8,10 +8,9 @@ export enum NodeType {
     DEFAULT,
 }
 
-export class Node {
+class BaseNode {
     title: string = ""
     path: string = ""
-    subNodes: Set<Node> = new Set()
     nodeType: NodeType = NodeType.DEFAULT
 
     constructor(title: string, path: string, nodeType: NodeType) {
@@ -20,8 +19,31 @@ export class Node {
         this.path = path
         this.nodeType = nodeType
     }
+}
 
-    getId(): String {
-        return `${this.path}`
+export class Node extends BaseNode {
+    // layer
+    subNodes: Set<Node> = new Set()
+    parentNode: string = ""
+
+    getId(): string {
+        return `${this.title}-${this.path}`
+    }
+
+    get id(): string {
+        return this.getId()
+    }
+
+    flatten(): Set<Node> {
+        let ret = new Set<Node>()
+        ret.add(this)
+        this.subNodes.forEach((each) => {
+            each.flatten().forEach((eachSub) => {
+                if (!ret.has(eachSub)) {
+                    ret.add(eachSub)
+                }
+            })
+        })
+        return ret
     }
 }

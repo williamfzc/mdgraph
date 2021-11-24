@@ -16,12 +16,6 @@ export class Processor {
         let root = new Node(path.basename(filePath), filePath, NodeType.LOCAL)
         this.processNode(root)
         return root
-
-        // scan finished
-        // TODO
-        // this.nodeStorage.getAll().forEach((v) => {
-        //     console.log(`${v.subNodes.size}`)
-        // })
     }
 
     processNode(node: Node) {
@@ -64,6 +58,7 @@ export class Processor {
 
     analyseNode(rootNode: Node, node: Node) {
         rootNode.subNodes.add(node)
+        node.parentNode = rootNode.id
 
         // this node has been scanned
         if (this.nodeStorage.has(node)) {

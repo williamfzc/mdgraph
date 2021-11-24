@@ -9,6 +9,10 @@ export namespace MDG {
         return processor.processAbsFile(filePath)
     }
 
+    export function file2nodes(filePath: string): Set<Node> {
+        return file2tree(filePath).flatten()
+    }
+
     export function tree2graph(
         node: Node,
         cb: (arg0: string) => any,
@@ -35,7 +39,6 @@ export namespace MDG {
                 fs.writeFile(outputPath, content, (err: any) => {
                     if (err) {
                         console.error(err)
-                        return
                     }
                 })
             },
