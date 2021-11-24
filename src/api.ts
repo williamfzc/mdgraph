@@ -29,4 +29,11 @@ export namespace MDG {
                 })
             })
     }
+
+    export function tree2canvas(
+        node: Node,
+        cb: (canvas: any) => any
+    ) {
+        new Drawer().draw(node).toCanvas().then(cb)
+    }
 }

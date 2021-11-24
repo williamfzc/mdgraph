@@ -21,4 +21,11 @@ describe("add function", () => {
             console.error(err)
         })
     })
+
+    it("tocanvas", () => {
+        let root = MDG.file2tree(path.resolve("test/res/a.md"))
+        MDG.tree2canvas(root, (canvas: any) => {
+            console.log(canvas)
+        })
+    })
 })
