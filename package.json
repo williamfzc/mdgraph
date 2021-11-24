@@ -1,11 +1,13 @@
 {
     "name": "mdgraph",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "markdown link graph",
     "main": "index.js",
+    "types": "dist/index.d.ts",
     "scripts": {
         "test": "jest",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "build": "tsc"
     },
     "author": "williamfzc",
     "license": "MIT",
