@@ -4,24 +4,31 @@
     "description": "markdown link graph",
     "main": "index.js",
     "types": "dist/index.d.ts",
+    "bin": {
+        "mdg": "dist/cli.js"
+    },
     "scripts": {
         "test": "jest",
         "format": "prettier --write .",
-        "build": "tsc"
+        "build": "tsc",
+        "package": "pkg . --output mdg"
     },
     "author": "williamfzc",
     "license": "MIT",
     "devDependencies": {
         "@types/jest": "^27.0.3",
         "@types/node": "^16.11.9",
+        "@types/yargs": "^17.0.7",
         "canvas": "^2.8.0",
         "jest": "^27.3.1",
+        "pkg": "^5.4.1",
         "prettier": "2.4.1",
         "ts-jest": "^27.0.7",
         "typescript": "^4.5.2",
         "vega": "^5.21.0",
         "vega-embed": "^6.20.2",
-        "vega-lite": "^5.2.0"
+        "vega-lite": "^5.2.0",
+        "yargs": "^17.2.1"
     },
     "jest": {
         "moduleFileExtensions": [
@@ -35,5 +42,8 @@
         "testRegex": "test/.*\\.(ts|tsx|js)$",
         "preset": "ts-jest",
         "testEnvironment": "node"
+    },
+    "pkg": {
+        "scripts": "dist/**/*.js"
     }
 }
